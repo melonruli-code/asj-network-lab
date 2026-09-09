@@ -1,4 +1,4 @@
-const API_URL = "";
+const API_URL = "https://script.google.com/macros/s/AKfycbzMK21Fkh-uUuyCt6OxSGsKPjxOOjr4V_7r9qSZDi1PQpAlxeHtkX0D1_0nAJAx0uCW/exec";
 let timerInterval, remaining=20*60, student={}, submitted=false;
 
 const questions=[
