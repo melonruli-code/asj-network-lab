@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASJ Network Lab — Tugas Interaktif</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="topbar">
+  <div class="brand"><span class="logo">⌁</span><div><b>ASJ NETWORK LAB</b><small>Platform Tugas & Studi Kasus Jaringan</small></div></div>
+  <div class="status"><span class="dot"></span> Mode Siswa</div>
+</header>
+
+<main class="container">
+<section id="intro" class="card hero">
+  <div class="badge">TUGAS ASJ • SIMULASI JARINGAN</div>
+  <h1>Uji kemampuanmu sebagai <span>Network Administrator</span></h1>
+  <p>Kerjakan studi kasus jaringan, analisis masalah, lalu tentukan solusi terbaik. Nilai otomatis dihitung setelah tugas dikirim.</p>
+  <div class="stats">
+    <div><strong>8</strong><small>Soal</small></div>
+    <div><strong>100</strong><small>Nilai Maks.</small></div>
+    <div><strong>20</strong><small>Menit</small></div>
+  </div>
+  <button class="btn primary" onclick="showForm()">Mulai Tugas →</button>
+</section>
+
+<section id="studentForm" class="card hidden">
+  <div class="section-title"><span>01</span><div><h2>Identitas Siswa</h2><p>Isi data sebelum memulai.</p></div></div>
+  <div class="form-grid">
+    <label>Nama Lengkap<input id="nama" placeholder="Contoh: Budi Santoso" required></label>
+    <label>Kelas<input id="kelas" placeholder="Contoh: XI TKJ 1" required></label>
+    <label>No. Absen<input id="absen" type="number" min="1" placeholder="01" required></label>
+    <label>Kelompok (opsional)<input id="kelompok" placeholder="Contoh: Kelompok 3"></label>
+  </div>
+  <button class="btn primary" onclick="startExam()">Mulai Simulasi →</button>
+</section>
+
+<section id="exam" class="hidden">
+  <div class="exam-head card">
+    <div><span class="badge">SIMULASI AKTIF</span><h2 id="qTitle">Soal 1</h2></div>
+    <div class="timer" id="timer">20:00</div>
+  </div>
+  <div id="questions"></div>
+  <div class="card submit-box">
+    <p>Pastikan semua jawaban sudah diperiksa.</p>
+    <button class="btn primary" onclick="submitExam()">Kirim Tugas & Lihat Nilai</button>
+  </div>
+</section>
+
+<section id="result" class="card hidden">
+  <div class="result-icon">✓</div>
+  <div class="badge">TUGAS SELESAI</div>
+  <h1 id="resultName"></h1>
+  <div class="score" id="score">0</div>
+  <p class="muted" id="resultMessage"></p>
+  <div class="result-grid">
+    <div><span>Pilihan Ganda</span><b id="pgScore">0/60</b></div>
+    <div><span>Studi Kasus</span><b id="caseScore">0/40</b></div>
+  </div>
+  <button class="btn" onclick="location.reload()">Kembali ke Awal</button>
+</section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Guru — ASJ Network Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="topbar">
+  <div class="brand"><span class="logo">⌁</span><div><b>ASJ NETWORK LAB</b><small>Dashboard Guru</small></div></div>
+</header>
+<main class="container">
+<section id="login" class="card narrow">
+  <div class="badge">AREA GURU</div>
+  <h1>Dashboard Nilai</h1>
+  <p class="muted">Masukkan PIN guru untuk membuka data.</p>
+  <input id="pin" type="password" placeholder="PIN guru">
+  <button class="btn primary full" onclick="login()">Buka Dashboard</button>
+</section>
+
+<section id="dashboard" class="hidden">
+  <div class="card">
+    <div class="section-title"><span>📊</span><div><h2>Rekap Nilai Siswa</h2><p>Data tersimpan dari pengumpulan tugas.</p></div></div>
+    <div class="toolbar">
+      <input id="search" placeholder="Cari nama / kelas..." oninput="renderTable()">
+      <button class="btn" onclick="loadData()">↻ Refresh</button>
+      <button class="btn" onclick="exportCSV()">↓ CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>No</th><th>Nama</th><th>Kelas</th><th>Absen</th><th>Nilai</th><th>PG</th><th>Kasus</th><th>Waktu</th></tr></thead>
+      <tbody id="rows"></tbody></table>
+    </div>
+  </div>
+</section>
+</main>
+<script>
+const API_URL = "";
+const TEACHER_PIN = "1234";
+let data = [];
+
+function login(){
+  if(document.getElementById('pin').value !== TEACHER_PIN){ alert('PIN salah.'); return; }
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  loadData();
+}
+async function loadData(){
+  if(!API_URL){ 
+    data = JSON.parse(localStorage.getItem('asj_submissions') || '[]');
+    renderTable(); return;
+  }
+  try{
+    const r = await fetch(API_URL+'?action=list');
+    data = await r.json();
+    renderTable();
+  }catch(e){ alert('Gagal mengambil data. Periksa API_URL.'); }
+}
+function renderTable(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const filtered=data.filter(x => `${x.nama} ${x.kelas}`.toLowerCase().includes(q));
+  document.getElementById('rows').innerHTML = filtered.map((x,i)=>`
+    <tr><td>${i+1}</td><td><b>${esc(x.nama)}</b></td><td>${esc(x.kelas)}</td><td>${esc(x.absen)}</td>
+    <td><strong class="grade">${x.nilai}</strong></td><td>${x.pg}/60</td><td>${x.kasus}/40</td><td>${esc(x.waktu||'')}</td></tr>`).join('');
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function exportCSV(){
+  const head=['Nama','Kelas','Absen','Nilai','PG','Kasus','Waktu'];
+  const rows=data.map(x=>[x.nama,x.kelas,x.absen,x.nilai,x.pg,x.kasus,x.waktu]);
+  const csv=[head,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='rekap-nilai-asj.csv'; a.click();
+}
+</script>
+</body>
+</html>
