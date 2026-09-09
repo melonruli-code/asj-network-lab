@@ -3,13 +3,54 @@ let timerInterval, remaining=20*60, student={}, submitted=false;
 
 const questions=[
  {type:'pg',text:'Perangkat yang berfungsi menghubungkan dua jaringan berbeda dan menentukan jalur paket adalah ...',opts:['Switch','Router','Access Point','Hub'],ans:1},
+
  {type:'pg',text:'Alamat IP 192.168.10.25/24 termasuk jaringan ...',opts:['192.168.10.0','192.168.10.25','192.168.1.0','255.255.255.0'],ans:0},
+
  {type:'pg',text:'Protokol yang digunakan untuk menerjemahkan nama domain menjadi alamat IP adalah ...',opts:['DHCP','FTP','DNS','SSH'],ans:2},
+
  {type:'pg',text:'Fungsi utama DHCP Server adalah ...',opts:['Membagikan alamat IP secara otomatis','Memblokir semua port','Mengubah kabel jaringan','Menyimpan file'],ans:0},
+
  {type:'pg',text:'Jika PC dapat ping gateway tetapi tidak dapat membuka website menggunakan nama domain, komponen yang perlu diperiksa terlebih dahulu adalah ...',opts:['DNS','RAM','Monitor','Keyboard'],ans:0},
+
  {type:'pg',text:'Perintah Linux yang umum digunakan untuk melihat konfigurasi/alamat IP interface adalah ...',opts:['ip addr','mkdir','passwd','clear'],ans:0},
- {type:'case',text:'STUDI KASUS 1 — Sebuah laboratorium memiliki 20 PC. Semua PC terhubung ke switch dan gateway router. PC dapat berkomunikasi dalam LAN, tetapi tidak dapat mengakses internet. Jelaskan minimal 3 langkah pemeriksaan yang akan kamu lakukan dan kemungkinan penyebabnya.',keywords:['gateway','ip','router','dns','internet','ping','routing','kabel','switch']},
- {type:'case',text:'STUDI KASUS 2 — Server Debian digunakan sebagai DHCP Server. Sebagian komputer mendapatkan IP 169.254.x.x dan tidak mendapatkan IP dari server. Jelaskan penyebab yang mungkin dan langkah perbaikannya.',keywords:['dhcp','server','service','network','kabel','switch','scope','pool','restart','config','ip']}
+
+ {type:'pg',text:'Pada Debian, perintah yang digunakan untuk melihat tabel routing adalah ...',opts:['ip route','ip address add','route dns','show network'],ans:0},
+
+ {type:'pg',text:'Sebuah komputer memiliki IP 192.168.1.10/24. Alamat broadcast jaringan tersebut adalah ...',opts:['192.168.1.0','192.168.1.1','192.168.1.254','192.168.1.255'],ans:3},
+
+ {type:'pg',text:'Jika sebuah jaringan menggunakan subnet mask 255.255.255.192, jumlah alamat IP dalam satu subnet adalah ...',opts:['32','64','128','256'],ans:1},
+
+ {type:'pg',text:'Perintah yang tepat untuk menguji koneksi jaringan ke alamat IP tertentu pada Linux Debian adalah ...',opts:['ping','mkdir','chmod','nano'],ans:0},
+
+ {type:'pg',text:'Port default yang digunakan oleh SSH adalah ...',opts:['21','22','53','80'],ans:1},
+
+ {type:'pg',text:'Port default yang digunakan oleh layanan HTTP adalah ...',opts:['22','25','80','443'],ans:2},
+
+ {type:'pg',text:'Perintah systemctl restart ssh pada Debian digunakan untuk ...',opts:['Menghapus SSH','Memulai ulang layanan SSH','Mengubah alamat IP','Mematikan server'],ans:1},
+
+ {type:'pg',text:'Jika server Debian dapat melakukan ping ke 8.8.8.8 tetapi tidak dapat melakukan ping ke google.com, kemungkinan masalah terdapat pada ...',opts:['RAM','DNS','Hard disk','Keyboard'],ans:1},
+
+ {type:'pg',text:'Perintah yang dapat digunakan untuk mengetahui apakah sebuah layanan sedang aktif pada Debian adalah ...',opts:['systemctl status','ip status','service-ip','show service'],ans:0},
+
+ {type:'case',
+ text:'STUDI KASUS 1 — Sebuah laboratorium memiliki 20 PC. Semua PC terhubung ke switch dan gateway router. PC dapat berkomunikasi dalam LAN, tetapi tidak dapat mengakses internet. Jelaskan minimal 3 langkah pemeriksaan yang akan kamu lakukan dan kemungkinan penyebabnya.',
+ keywords:['gateway','ip','router','dns','internet','ping','routing','kabel','switch']},
+
+ {type:'case',
+ text:'STUDI KASUS 2 — Server Debian digunakan sebagai DHCP Server. Sebagian komputer mendapatkan IP 169.254.x.x dan tidak mendapatkan IP dari server. Jelaskan penyebab yang mungkin dan langkah perbaikannya.',
+ keywords:['dhcp','server','service','network','kabel','switch','scope','pool','restart','config','ip']},
+
+ {type:'case',
+ text:'STUDI KASUS 3 — Server Debian memiliki alamat IP 192.168.10.2 dan gateway 192.168.10.1. Server dapat melakukan ping ke gateway tetapi tidak dapat mengakses internet. Jelaskan langkah troubleshooting untuk menentukan apakah masalah berasal dari routing, gateway, atau DNS.',
+ keywords:['gateway','routing','route','dns','ip','ping','internet','nameserver','default']},
+
+ {type:'case',
+ text:'STUDI KASUS 4 — Sebuah web server Debian sudah terpasang dan dapat dibuka menggunakan localhost. Namun ketika diakses dari komputer lain menggunakan alamat IP server, halaman tidak dapat dibuka. Jelaskan kemungkinan penyebab dan langkah pemeriksaan yang harus dilakukan.',
+ keywords:['web','apache','nginx','localhost','ip','firewall','port','80','service','server']},
+
+ {type:'case',
+ text:'STUDI KASUS 5 — Administrator jaringan mengubah alamat IP server Debian dari 192.168.1.10 menjadi 192.168.10.10. Setelah perubahan, komputer client tidak dapat terhubung ke server. Jelaskan apa saja yang harus diperiksa dan bagaimana cara memperbaikinya.',
+ keywords:['ip','subnet','gateway','client','server','network','interface','route','ping','config']}
 ];
 
 function showForm(){document.getElementById('intro').classList.add('hidden');document.getElementById('studentForm').classList.remove('hidden');scrollTo(0,0)}
@@ -36,7 +77,7 @@ function submitExam(auto=false){
  submitted=true; clearInterval(timerInterval);
  let pg=0, kasus=0, answers=[];
  questions.forEach((q,i)=>{
-   if(q.type==='pg'){const el=document.querySelector(`input[name="q${i}"]:checked`);const val=el?Number(el.value):null;answers.push(val);if(val===q.ans)pg+=10}
+   if(q.type==='pg'){const el=document.querySelector(`input[name="q${i}"]:checked`);const val=el?Number(el.value):null;answers.push(val);if(val===q.ans)pg+=4}
    else {const text=(document.getElementById(`q${i}`).value||'').trim();answers.push(text);kasus+=scoreCase(text,q.keywords)}
  });
  const nilai=pg+kasus;
@@ -50,7 +91,7 @@ function submitExam(auto=false){
  document.getElementById('resultMessage').textContent=nilai>=85?'Sangat baik! Analisis jaringanmu sudah kuat.':nilai>=70?'Bagus! Tingkatkan lagi ketelitian saat troubleshooting.':'Terus berlatih. Fokus pada urutan troubleshooting dan konsep dasar jaringan.';
  scrollTo(0,0);
 }
-function scoreCase(text,keys){const t=text.toLowerCase();let hit=0;keys.forEach(k=>{if(t.includes(k))hit++});return Math.min(20,Math.round(hit/Math.min(keys.length,6)*20))}
+function scoreCase(text,keys){const t=text.toLowerCase();let hit=0;keys.forEach(k=>{if(t.includes(k))hit++});return Math.min(8,Math.round(hit/Math.min(keys.length,6)*8))}
 async function sendToServer(record){
  if(!API_URL)return;
  try{await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(record)})}catch(e){}
